@@ -6,22 +6,25 @@ import { config } from '../../config/index.js';
 const userSchema = new Schema<IUser>(
   {
     name: { type: String, required: true },
-    email : { type: String, unique: true , required: true },
+    email: { type: String, unique: true, required: true },
     password: { type: String, required: true, select: 0 },
-    phone : { type : Number, unique: true ,required: true },
+    phone: { type: Number, unique: true, required: true },
     role: {
       type: String,
       enum: ['admin', 'user'],
     },
   },
   {
-    toJSON: { virtuals: true },
-    toObject: { virtuals: true },
+    toJSON: { virtuals: false },
+    toObject: { virtuals: false },
     timestamps: true,
 
     statics: {
-      async doesUserExistByEmail(email: string) {
+      async doesUserExist(email: string) {
         return await this.findOne({ email }).select('+password');
+      },
+      async doesPasswordMatch(plainTextPswd: string, hashedPswd: string) {
+        return await bcrypt.compare(plainTextPswd, hashedPswd);
       },
     },
   }
@@ -30,7 +33,7 @@ const userSchema = new Schema<IUser>(
 // pre save middleware
 userSchema.pre('save', async function (next) {
   const user = this as IUser;
-  
+
   // Only hash the password if it’s new or modified
   try {
     user.password = await bcrypt.hash(

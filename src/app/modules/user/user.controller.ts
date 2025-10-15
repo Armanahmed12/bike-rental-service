@@ -1,61 +1,35 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { NextFunction, Request, Response } from 'express';
-import { UserServices } from './user.service.js';
-import sendResponse from '../../utils/sendResponse.js';
-import catchAsync from '../../utils/catchAsync.js';
 import httpStatus from 'http-status';
 
-const createStudent = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const { password, student: studentData } = req.body;
-    const result = await UserServices.createStudentIntoDB(
-      password,
-      studentData
-    );
+import catchAsync from '../../utils/catchAsync.js';
+import sendResponse from '../../utils/sendResponse.js';
+import { User } from './user.model.js';
+import { UserServices } from './user.service.js';
 
-    sendResponse(res, {
-      statusCode: 200,
-      success: true,
-      message: 'Student has been created successfully',
-      data: result,
-    });
-  } catch (error: any) {
-    next(error);
-  }
-};
-
-const createFaculty = catchAsync(async (req, res) => {
-  const { password, faculty: facultyData } = req.body;
-
-  const result = await UserServices.createFacultyIntoDB(password, facultyData);
-
+const getYourProfile = catchAsync(async (req, res) => {
+  const user = await User.findById(req.user?.userId);
   sendResponse(res, {
-    statusCode: httpStatus.OK,
     success: true,
-    message: 'Faculty is created succesfully',
-    data: result,
+    statusCode: httpStatus.OK,
+    message: 'User Profile retrived successfully',
+    data: user,
   });
 });
 
-const createAdmin = catchAsync(async (req, res) => {
-  const { password, admin: adminData } = req.body;
-
-  const result = await UserServices.createAdminIntoDB(password, adminData);
+const updateUserProfile = catchAsync(async (req, res) => {
+  const result = await UserServices.updateUserProfile(
+    req.user?.userId,
+    req.body
+  );
 
   sendResponse(res, {
-    statusCode: httpStatus.OK,
     success: true,
-    message: 'Admin is created succesfully',
+    statusCode: httpStatus.OK,
+    message: 'profile updated successfully',
     data: result,
   });
 });
 
 export const UserControllers = {
-  createStudent,
-  createFaculty,
-  createAdmin,
+  getYourProfile,
+  updateUserProfile,
 };

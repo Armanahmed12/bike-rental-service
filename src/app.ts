@@ -16,7 +16,7 @@ app.get('/', async (req: Request, res: Response) => {
 });
 
 // student routes 👇
-app.use('/api/v1', router);
+app.use('/api', router);
 
 app.use(notFound);
 app.use(globalErrorHandler);

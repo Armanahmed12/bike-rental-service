@@ -1,32 +1,18 @@
 import { Router } from 'express';
-import validateRequest from '../../middlewares/validateRequest.js';
-import { studentValidations } from '../student/student.validation.js';
-import { createAdminValidationSchema } from '../admin/admin.validation.js';
-import { createFacultyValidationSchema } from '../faculty/faculty.validation.js';
 import { UserControllers } from './user.controller.js';
 import auth from '../../middlewares/auth.js';
+import validateRequest from '../../middlewares/validateRequest.js';
+import { updateUserValidationSchema } from './user.validation.js';
 
 const router = Router();
 
-router.post(
-  '/create-student',
-  auth('admin'),
-  validateRequest(studentValidations.createStudentValidationSchema),
-  UserControllers.createStudent
-);
+router.get('/me', auth('admin', 'user'), UserControllers.getYourProfile);
 
-router.post(
-  '/create-faculty',
-  auth('admin'),
-  validateRequest(createFacultyValidationSchema),
-  UserControllers.createFaculty
-);
-
-router.post(
-  '/create-admin',
-  // auth('admin'),
-  validateRequest(createAdminValidationSchema),
-  UserControllers.createAdmin
+router.put(
+  '/me',
+  auth('admin', 'user'),
+  validateRequest(updateUserValidationSchema),
+  UserControllers.updateUserProfile
 );
 
 export const UserRouter = router;

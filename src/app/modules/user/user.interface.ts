@@ -3,10 +3,14 @@ import { USER_ROLE } from './user.constant.js';
 import z from 'zod';
 import { userValidationSchema } from './user.validation.js';
 
-export type IUser = z.infer<typeof userValidationSchema>;
+export type IUser = z.infer<typeof userValidationSchema>['body'];
 
 export interface UserModel extends Model<IUser> {
-  doesUserExistByEmail(is: string): Promise<IUser | null>;
+  doesUserExist(email: string): Promise<IUser | null>;
+  doesPasswordMatch(
+    plainTextPswd: string,
+    hashedPswd: string
+  ): Promise<boolean>;
 }
 
 export type TUserRole = keyof typeof USER_ROLE;

@@ -8,6 +8,7 @@ const validateRequest = (schema: ZodObject) => {
       body: req.body,
       cookies: req.cookies,
     });
+    console.log(req.body, 'from =======================>>> validation zod');
     next();
   });
 };
