@@ -15,6 +15,12 @@ app.get('/', async (req: Request, res: Response) => {
   res.send('Hello World!');
 });
 
+async function func2(req: Request, res: Response) {
+  res.send('Hello World 2!');
+}
+
+app.get('/d', func2);
+
 // student routes 👇
 app.use('/api', router);
 
